@@ -4,8 +4,8 @@
 # include <iostream>
 # include <string>
 # include <stdexcept>
-# include <stdlib.h>
-# include <errno.h>
+# include <cstdlib>
+# include <cerrno>
 # include <cctype>
 # include <climits>
 # include <iomanip>
