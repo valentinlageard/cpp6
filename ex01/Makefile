@@ -1,6 +1,5 @@
 NAME		=	ex00
-SRC			=	main.cpp \
-				serialization.cpp
+SRC			=	main.cpp
 
 OBJS		=	$(SRC:.cpp=.o)
 

@@ -23,9 +23,14 @@ Converter & Converter::operator=(Converter const & rhs) {
 }
 
 Converter::operator char() const {
+	double dtmp;
 	long tmp;
 	char result;
 
+	dtmp = std::strtod(_str.c_str(), NULL);
+	if (std::isnan(dtmp) || std::isinf(dtmp)) {
+		throw Converter::OverflowException();
+	}
 	tmp = std::strtol(_str.c_str(), NULL, 10);
 	if (tmp < CHAR_MIN || tmp > CHAR_MAX || errno == ERANGE) {
 		errno = 0;
@@ -39,9 +44,14 @@ Converter::operator char() const {
 }
 
 Converter::operator int() const {
+	double dtmp;
 	long tmp;
 	int result;
 
+	dtmp = std::strtod(_str.c_str(), NULL);
+	if (std::isnan(dtmp) || std::isinf(dtmp)) {
+		throw Converter::OverflowException();
+	}
 	tmp = std::strtol(_str.c_str(), NULL, 10);
 	if (tmp < INT_MIN || tmp > INT_MAX || errno == ERANGE) {
 		errno = 0;
@@ -112,7 +122,7 @@ void Converter::_print_float() const {
 	std::cout << "float: ";
 	try {
 		float float_to_print = static_cast<float>(*this);
-		std::cout << std::setprecision(_get_precision()) << float_to_print << std::endl;
+		std::cout << std::fixed << std::setprecision(_get_precision()) << float_to_print << 'f' << std::endl;
 	}
 	catch (std::exception const & e) {
 		std::cout << e.what() << std::endl;
@@ -123,7 +133,7 @@ void Converter::_print_double() const {
 	std::cout << "double: ";
 	try {
 		double double_to_print = static_cast<double>(*this);
-		std::cout << std::setprecision(_get_precision()) << double_to_print << std::endl;
+		std::cout << std::fixed << std::setprecision(_get_precision()) << double_to_print << std::endl;
 	}
 	catch (std::exception const & e) {
 		std::cout << e.what() << std::endl;
@@ -140,6 +150,9 @@ int Converter::_get_precision() const {
 	while (_str[i] && std::isdigit(_str[i])) {
 		++i;
 		++precision;
+	}
+	if (precision == 0) {
+		precision = 1;
 	}
 	return precision;
 }
