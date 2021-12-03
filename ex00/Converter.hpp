@@ -46,6 +46,7 @@ private:
 	void _print_double() const;
 
 	int _get_precision() const;
+	bool _is_non_literal() const;
 };
 
 #endif

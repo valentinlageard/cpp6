@@ -32,6 +32,9 @@ Converter::operator char() const {
 		throw Converter::OverflowException();
 	}
 	tmp = std::strtol(_str.c_str(), NULL, 10);
+	if (_str.length() == 1 and !std::isdigit(_str[0])) {
+		tmp = static_cast<long>(_str[0]);
+	}
 	if (tmp < CHAR_MIN || tmp > CHAR_MAX || errno == ERANGE) {
 		errno = 0;
 		throw Converter::OverflowException();
@@ -53,6 +56,9 @@ Converter::operator int() const {
 		throw Converter::OverflowException();
 	}
 	tmp = std::strtol(_str.c_str(), NULL, 10);
+	if (_str.length() == 1 and !std::isdigit(_str[0])) {
+		tmp = static_cast<double>(_str[0]);
+	}
 	if (tmp < INT_MIN || tmp > INT_MAX || errno == ERANGE) {
 		errno = 0;
 		throw Converter::OverflowException();
@@ -64,6 +70,9 @@ Converter::operator int() const {
 Converter::operator float() const {
 	float result;
 	result = std::strtof(_str.c_str(), NULL);
+	if (_str.length() == 1 and !std::isdigit(_str[0])) {
+		result = static_cast<double>(_str[0]);
+	}
 	if (errno == ERANGE) {
 		errno = 0;
 		throw Converter::OverflowException();
@@ -74,6 +83,9 @@ Converter::operator float() const {
 Converter::operator double() const {
 	double result;
 	result = std::strtod(_str.c_str(), NULL);
+	if (_str.length() == 1 and !std::isdigit(_str[0])) {
+		result = static_cast<double>(_str[0]);
+	}
 	if (errno == ERANGE) {
 		errno = 0;
 		throw Converter::OverflowException();
@@ -82,6 +94,11 @@ Converter::operator double() const {
 }
 
 void Converter::print_conversions() const {
+	if (!_is_non_literal())
+	{
+		std::cout << "Error: Argument isn't a valid litteral." << std::endl;
+		return ;
+	}
 	_print_char();
 	_print_int();
 	_print_float();
@@ -155,4 +172,21 @@ int Converter::_get_precision() const {
 		precision = 1;
 	}
 	return precision;
+}
+
+bool Converter::_is_non_literal() const {
+	int non_digit = 0;
+
+	for (unsigned long i=0; i < _str.length(); i++) {
+		if (!std::isdigit(_str[i]) && !(static_cast<std::string>("ainf+-.").find(_str[i]) != std::string::npos)) {
+			if (i > 0) {
+				return false;
+			}
+			non_digit++;
+		}
+		if (non_digit > 1) {
+			return false;
+		}
+	}
+	return true;
 }
