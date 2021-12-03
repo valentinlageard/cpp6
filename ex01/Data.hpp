@@ -5,7 +5,7 @@
 
 struct Data {
 	int position;
-	std::string name;
+	int size;
 };
 
 
